@@ -1,4 +1,4 @@
-# graphp/graphml
+# GraphYEd
 
 [![Packagist](https://img.shields.io/packagist/dt/edno/graphyed.svg?style=flat-square)](https://packagist.org/packages/edno/graphyed)
 [![Latest Version](https://img.shields.io/packagist/v/edno/graphyed.svg?style=flat-square)](https://packagist.org/packages/edno/graphyed)
