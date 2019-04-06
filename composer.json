@@ -1,0 +1,16 @@
+{
+    "name": "edno/graphyed",
+    "description": "GraphYed is an XML-based file format for graphs",
+    "keywords": ["GraphYEd", "Graph XML", "yEd"],
+    "require": {
+        "php": ">=7.1",
+        "graphp/graphml": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0",
+        "php-coveralls/php-coveralls": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {"edno\\GraphYEd\\": "src/"}
+    }
+}
