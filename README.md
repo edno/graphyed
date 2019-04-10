@@ -9,9 +9,9 @@
 
 GraphYEd extends [graphp/graphml](https://github.com/graphp/graphml) for supporting [yEd](https://www.yworks.com/products/yed) file format for [GraphML](http://graphml.graphdrawing.org/).
 
-It provides access to the vertices (or nodes) and edges labels through using respectively attributes `nodegraphics` and `edgegraphics` :
-- `$vertex->getAttribute('nodegraphics')->NodeLabel`
-- `$edge->getAttribute('edgegraphics')->EdgeLabel`
+It provides access to the vertices (or nodes) and edges labels :
+- `$vertex->getAttribute('labels')`
+- `$edge->getAttribute('labels')`
 
 
 > Please refer to [GraPHP](https://github.com/graphp/graph) library for more details on how to manipulate graphs.
@@ -25,7 +25,7 @@ $ composer require edno/graphyed
 ```
 
 ## Usage
-
+The method `getAttribute('labels')` will return an **array of type string**.
 ```php
 <?php
 
@@ -36,7 +36,7 @@ $graphml = file_get_contents('mygraph.graphml');
 $graph = $loader->loadContents($graphml);
 
 foreach($graph->getVertices() as $vertex) {
-  print($vertex->getAttribute('nodegraphics')->NodeLabel);
+  print($vertex->getAttribute('labels')[0]);
 }
 ```
 

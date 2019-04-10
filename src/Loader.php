@@ -11,6 +11,8 @@ use \Fhaculty\Graph\Attribute\AttributeAware;
 class Loader extends \Graphp\GraphML\Loader
 {
 
+    private $ns = null;
+
     public function loadContents($contents)
     {
         $root = new SimpleXMLElement($contents);
@@ -20,6 +22,8 @@ class Loader extends \Graphp\GraphML\Loader
 
         $graph = $this->loadXmlYEd($graph, $root);
 
+        $this->ns = static::getYEdXMLNamespace($root);
+
         return $graph;
     }
 
@@ -28,10 +32,20 @@ class Loader extends \Graphp\GraphML\Loader
         // parse all yEd attribute keys
         $keys = array();
         foreach ($root->key as $keyElem) {
+            // case of yEd desktop editor (see issue #1)
             if(isset($keyElem['yfiles.type'])) {
                 $keys[(string)$keyElem['id']] = array(
-                    'name' => (string)$keyElem['yfiles.type'],
+                    'name' => 'labels',
                     'type' => (string)$keyElem['yfiles.type'],
+                    'for'  => (isset($keyElem['for']) ? (string)$keyElem['for'] : 'all'),
+                    'default' => null
+                );
+            }
+            // case of yEd online editor (see issue #1)
+            if($keyElem['attr.name'] == 'NodeLabels' || $keyElem['attr.name'] == 'EdgeLabels') {
+                $keys[(string)$keyElem['id']] = array(
+                    'name' => 'labels',
+                    'type' => (string)$keyElem['attr.name'],
                     'for'  => (isset($keyElem['for']) ? (string)$keyElem['for'] : 'all'),
                     'default' => null
                 );
@@ -50,7 +64,7 @@ class Loader extends \Graphp\GraphML\Loader
             $source = $graph->getVertex((string)$edgeElem['source']);
             $target = $graph->getVertex((string)$edgeElem['target']);
             $edges = $source->getEdgesTo($target);
-            $this->loadAttributesYEd($edgeElem, $edges->getEdgeFirst(), $keys);
+            $this->loadAttributesYEd($edgeElem, $edges->getEdgeFirst(), $keys); // getEdgeFirst() to be reviewed
         }
 
         return $graph;
@@ -67,19 +81,34 @@ class Loader extends \Graphp\GraphML\Loader
         }
     }
 
-    protected function castAttributeYEd($value, $type)
+    protected function castAttributeYEd(SimpleXMLElement $xml, string $type)
     {
-        if ($type === 'nodegraphics' || $type === 'edgegraphics') {
-            $attribute = new \stdClass();
-            foreach ($value->children('y', true) as $xml) {
-                if ($xml instanceof SimpleXMLElement) {
-                    foreach ($xml as $name => $data) {
-                        $attribute->{$name} = (string)$data;
-                    }
-                }
-            }
-            return $attribute;
+        $xml->registerXPathNamespace('y', $this->ns);
+        // cases of yEd desktop editor (see issue #1)
+        if ($type == 'nodegraphics') {
+            $result = $xml->xpath('.//y:NodeLabel');
         }
-        return (string)$value;
+        if ($type == 'edgegraphics') {
+            $result = $xml->xpath('.//y:EdgeLabel');
+        }
+        // case of yEd online editor (see issue #1)
+        if ($type == 'NodeLabels' || $type == 'EdgeLabels') {
+            $result = $xml->xpath('.//y:Label.Text');
+        }
+        \array_walk($result, function(&$element) {
+          $element = (string)$element;
+        });
+        return $result;
+    }
+
+    protected static function getYEdXMLNamespace(SimpleXMLElement $xml, string $key = "y")
+    {
+        $namespaces = $xml->getNamespaces(true);
+
+        if (\array_key_exists($key, $namespaces)) {
+          return $namespaces[$key];
+        } else {
+          new \Exception("{$key} is not a valid namespace key for current XML document");
+        }
     }
 }
