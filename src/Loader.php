@@ -33,7 +33,7 @@ class Loader extends \Graphp\GraphML\Loader
         $keys = array();
         foreach ($root->key as $keyElem) {
             // case of yEd desktop editor (see issue #1)
-            if(isset($keyElem['yfiles.type'])) {
+            if (isset($keyElem['yfiles.type'])) {
                 $keys[(string)$keyElem['id']] = array(
                     'name' => 'labels',
                     'type' => (string)$keyElem['yfiles.type'],
@@ -42,7 +42,7 @@ class Loader extends \Graphp\GraphML\Loader
                 );
             }
             // case of yEd online editor (see issue #1)
-            if($keyElem['attr.name'] == 'NodeLabels' || $keyElem['attr.name'] == 'EdgeLabels') {
+            if ($keyElem['attr.name'] == 'NodeLabels' || $keyElem['attr.name'] == 'EdgeLabels') {
                 $keys[(string)$keyElem['id']] = array(
                     'name' => 'labels',
                     'type' => (string)$keyElem['attr.name'],
@@ -74,7 +74,7 @@ class Loader extends \Graphp\GraphML\Loader
     {
         // apply all data attributes for this element
         foreach ($xml->data as $dataElem) {
-            if(isset($keys[(string)$dataElem['key']])) {
+            if (isset($keys[(string)$dataElem['key']])) {
                 $key = $keys[(string)$dataElem['key']];
                 $target->setAttribute($key['name'], $this->castAttributeYEd($dataElem, $key['type']));
             }
@@ -96,7 +96,7 @@ class Loader extends \Graphp\GraphML\Loader
             $result = $xml->xpath('.//y:Label.Text');
         }
         \array_walk($result, function(&$element) {
-          $element = (string)$element;
+            $element = (string)$element;
         });
         return $result;
     }
@@ -106,9 +106,9 @@ class Loader extends \Graphp\GraphML\Loader
         $namespaces = $xml->getNamespaces(true);
 
         if (\array_key_exists($key, $namespaces)) {
-          return $namespaces[$key];
+            return $namespaces[$key];
         } else {
-          new \Exception("{$key} is not a valid namespace key for current XML document");
+            new \Exception("{$key} is not a valid namespace key for current XML document");
         }
     }
 }
