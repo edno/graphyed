@@ -2,6 +2,14 @@
     "name": "edno/graphyed",
     "description": "GraphYed is an XML-based file format for graphs",
     "keywords": ["GraphYEd", "Graph XML", "yEd"],
+    "homepage": "https://github.com/edno/graphyed",
+    "license": "MIT",
+    "authors": [
+        {
+          "name": "Gregory Heitz",
+          "email": "edno@edno.io"
+        }
+    ],
     "require": {
         "php": ">=7.1",
         "graphp/graphml": "*"
