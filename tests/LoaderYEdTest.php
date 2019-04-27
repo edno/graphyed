@@ -1,13 +1,12 @@
 <?php
 
 use edno\GraphYEd\Loader;
-// use  Graphp\GraphML\Loader;
 
 class LoaderYEdTest extends TestCase
 {
     private $loader;
 
-    public function setUp()
+    public function setUp():void
     {
         $this->loader = new Loader();
     }
